@@ -2,7 +2,7 @@
 """ PyHighcharts: examples.py
 Basic Examples 
 """
-from PyHighcharts.highcharts.chart import Highchart
+from chart import Highchart
 import math, random
 
 EXAMPLE_CONFIG = {
@@ -13,6 +13,7 @@ EXAMPLE_CONFIG = {
     },
     "yAxis": {
             "gridLineWidth": 0,
+            "title": {"text":"yTitle"}
     }
 }
 
@@ -36,7 +37,7 @@ def spline_example():
     data = [math.sin(x/100.0) \
         for x in range(0, int(4*math.pi*100), int(math.pi/16*100))]
     chart.title("Sin Spline")
-    chart.add_data_set(data, series_type="spline", name="Sin")
+    chart.add_data_set(data, series_type="spline", name="Sin",)
     chart.set_options(EXAMPLE_CONFIG)
     chart.show()
 

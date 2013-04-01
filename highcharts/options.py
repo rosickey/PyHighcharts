@@ -101,7 +101,7 @@ class ChartOptions(BaseOptions):
 class ColorsOptions(BaseOptions):
     """ Special Case, this is simply just an array of colours """
     def __init__(self):
-        self.__dict__.update({"colors":[]})
+        self.__dict__.update({"colors":['#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4']})
 
     def set_colors(self,colors):
         self.__dict__.update({"colors":colors})

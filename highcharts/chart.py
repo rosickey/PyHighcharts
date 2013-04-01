@@ -6,15 +6,15 @@ browser enabled charts on the fly.
 For Highcharts Licencing Visit: 
 http://shop.highsoft.com/highcharts.html
 """
-from PyHighcharts.highcharts.options import ChartOptions, \
+from options import ChartOptions, \
     ColorsOptions, CreditsOptions, ExportingOptions, \
     GlobalOptions, LabelsOptions, LangOptions, \
     LegendOptions, LoadingOptions, NavigationOptions, PaneOptions, \
     PlotOptions, SeriesData, SubtitleOptions, TitleOptions, \
     TooltipOptions, xAxisOptions, yAxisOptions 
 
-from PyHighcharts.highcharts.highchart_types import Series, SeriesOptions
-from PyHighcharts.highcharts.common import Formatter
+from highchart_types import Series, SeriesOptions
+from common import Formatter
 
 
 
@@ -32,7 +32,8 @@ ROOT_PATH = os.path.dirname(os.path.dirname(os.path.abspath(inspect.getfile(insp
 BASE_TEMPLATE = ROOT_PATH + "/templates/base.tmp"
 SHOW_TEMPLATE = ROOT_PATH + "/templates/show_temp.tmp"
 GECKO_TEMPLATE = ROOT_PATH + "/templates/gecko_temp.tmp"
-
+THEMES_JS = ROOT_PATH + "/templates/js/themes/default.js"
+CSS = ROOT_PATH + "/templates/css/nature.css"
 DEFAULT_POINT_INTERVAL = 86400000
 
 FORMAT_SPECIAL_CASES = {
@@ -100,7 +101,13 @@ def chart_formatter(option_type, data):
         "series": series_formatter,
     }
     tmp = ""
+    #print option_type, 'option_type900000000000990'
+    #print data, 'data99999000000000'
+    if data == {}:
+        #print option_type, 'option_type900000000000990'
+        return tmp
     if option_type in special_cases:
+        #print special_cases[option_type](data), 'vvvvvvvvvvvvvv'
         tmp += special_cases[option_type](data)
     else:
         for key, val in data.items():
@@ -117,6 +124,7 @@ def chart_formatter(option_type, data):
             else:
                 tmp = update_template(tmp, key, val)
     return tmp
+
 
 
 class Highchart(object):
@@ -155,7 +163,7 @@ class Highchart(object):
 
         # Process kwargs
         allowed_kwargs = ["width", "height", "renderTo", "backgroundColor"]
-
+        
         for keyword in allowed_kwargs:
             if keyword in kwargs:
                 self.options['chart'].update_dict(**{keyword:kwargs[keyword]})
@@ -174,11 +182,14 @@ class Highchart(object):
         rendered = tmp.format(**self.__export_options__())
         if ret: 
             return rendered
-        print rendered
+     
 
 
     def __export_options__(self):
         bind = self.options.items()
+        m = bind
+        # for a, b in m:
+        #      print a, 'sssssssssssssswwwwww'
         data = {k:chart_formatter(k, opClass.__dict__) \
             for k, opClass in bind}
         return data
@@ -282,6 +293,7 @@ class Highchart(object):
             self.options["plotOptions"].update_dict(**to_update)
         series_data = Series(data, series_type=series_type, \
             supress_errors=True, **kwargs)
+        #print series_data, 'dataserce99999999'
         self.options["series"].data.append(series_data)
 
 
@@ -303,18 +315,24 @@ class Highchart(object):
 
     def show(self):
         """ Show Function """
+        
         handle = webbrowser.get()
         if not os.path.exists(TMP_DIR): 
             os.mkdir(TMP_DIR)
         new_filename = "%x.html" % (random.randint(pow(16, 5), pow(16, 6)-1))
         new_fn = TMP_DIR + new_filename
         with open(SHOW_TEMPLATE, 'rb') as file_open:
-            tmp = file_open.read()
+            tp = file_open.readlines()
+        tp.insert(4,'<script type="text/javascript" src=' + THEMES_JS + '></script>\n')
+        tp.insert(5,'<link rel="stylesheet" type="text/css" href=' + CSS + '></link>\n')
+        tmp = ''
+        for tp_str in tp:
+            tmp += tp_str  
         html = tmp.format(chart_data=self.__render__(ret=True))
         with open(new_fn, 'wb') as file_open:
             file_open.write(html)
         handle.open("file://"+new_fn)
-
+    
 
     def generate(self):
         """ __render__ Wrapper """
