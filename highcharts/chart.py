@@ -31,8 +31,10 @@ ROOT_PATH = os.path.dirname(os.path.dirname(os.path.abspath(inspect.getfile(insp
 # Static Vars
 BASE_TEMPLATE = ROOT_PATH + "/templates/base.tmp"
 SHOW_TEMPLATE = ROOT_PATH + "/templates/show_temp.tmp"
+SHORT_TEMPLATE = ROOT_PATH + "/templates/short_temp.tmp"
 GECKO_TEMPLATE = ROOT_PATH + "/templates/gecko_temp.tmp"
 THEMES_JS = ROOT_PATH + "/templates/js/themes/default.js"
+LOAD_JS = ROOT_PATH + "/templates/js/chartloader.js"
 CSS = ROOT_PATH + "/templates/css/nature.css"
 DEFAULT_POINT_INTERVAL = 86400000
 
@@ -175,12 +177,16 @@ class Highchart(object):
     def __render__(self, ret=False, template="base"):
         if template == "base":
             TEMPLATE = BASE_TEMPLATE
+            TEMPLATE = SHORT_TEMPLATE
         elif template == "gecko":
             TEMPLATE = GECKO_TEMPLATE
         with open(TEMPLATE,"rb") as template_file:
             tmp = template_file.read()
         rendered = tmp.format(**self.__export_options__())
         if ret: 
+            #return "".join(rendered.split()) 
+            return rendered.replace("\n","").replace("\t","").strip() 
+            #rendered = 'var _chartit_hco_array = [{"series": [{"stacking": false, "data": [51.8, 55.4, 62.3, 68.5, 75.8, 81.3, 83.6, 83.3, 78.9, 70.4, 60.9, 53.7], "type": "line", "name": "Houston Temp"}, {"stacking": false, "data": [29.3, 31.5, 38.9, 48.3, 58.5, 68, 73.9, 72.3, 64.7, 54.1, 44.9, 34.8], "type": "line", "name": "Boston Temp"}], "yAxis": [{"title": {"text": "Houston Temp & Boston Temp"}}], "chart": {"renderTo": "container"}, "xAxis": [{"categories": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], "title": {"text": "Month number"}}], "title": {"text": "Weather Data of Boston and Houston"}}];' 
             return rendered
      
 
@@ -324,7 +330,8 @@ class Highchart(object):
         with open(SHOW_TEMPLATE, 'rb') as file_open:
             tp = file_open.readlines()
         tp.insert(4,'<script type="text/javascript" src=' + THEMES_JS + '></script>\n')
-        tp.insert(5,'<link rel="stylesheet" type="text/css" href=' + CSS + '></link>\n')
+        tp.insert(5,'<link rel="stylesheet" type="text/css" href=' + CSS + '/>\n')
+        #tp.insert(6,'<script type="text/javascript" src=' + LOAD_JS + '></script>\n')
         tmp = ''
         for tp_str in tp:
             tmp += tp_str  

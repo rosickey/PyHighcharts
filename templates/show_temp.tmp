@@ -10,6 +10,6 @@
 <script type='text/javascript'>
     {chart_data}
 </script>
-
+<script type="text/javascript" src=/Users/rosickey/src/PyHighcharts/templates/js/chartloader.js></script>
 </body>
 </html>
